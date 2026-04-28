@@ -21,6 +21,13 @@ export function signupVolunteerRequest(payload) {
   });
 }
 
+export function signupStaffRequest(payload) {
+  return apiRequest("/auth/signup/staff", {
+    method: "POST",
+    body: payload,
+  });
+}
+
 export function forgotPasswordRequest(email) {
   return apiRequest("/auth/forgot-password", {
     method: "POST",

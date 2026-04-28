@@ -5,6 +5,7 @@ import {
   loginRequest,
   resetPasswordRequest,
   signupNgoRequest,
+  signupStaffRequest,
   signupVolunteerRequest,
   validateResetTokenRequest,
 } from "../services/authApi";
@@ -16,28 +17,31 @@ const ROLE_ALIASES = {
   NGO: "ngo",
   Volunteer: "volunteer",
   Admin: "admin",
-  Staff: "admin",
+  Staff: "staff",
   ngo: "ngo",
   volunteer: "volunteer",
   admin: "admin",
-  staff: "admin",
+  staff: "staff",
 };
 
 const ROLE_LABELS = {
   ngo: "NGO",
   volunteer: "Volunteer",
+  staff: "Staff",
   admin: "Admin",
 };
 
 const DEMO_CREDENTIALS = {
   NGO: { email: "", password: "" },
   Volunteer: { email: "", password: "" },
+  Staff: { email: "", password: "" },
   Admin: { email: "", password: "" },
 };
 
 const DASHBOARD_BY_ROLE = {
   ngo: "/ngo/dashboard",
   volunteer: "/volunteer/dashboard",
+  staff: "/staff/dashboard",
   admin: "/admin/dashboard",
 };
 
@@ -82,12 +86,12 @@ export function AuthProvider({ children }) {
       };
     }
 
-    if ((normalizedRole === "volunteer" || normalizedRole === "admin") && !normalizedRoleId) {
+    if ((normalizedRole === "volunteer" || normalizedRole === "staff") && !normalizedRoleId) {
       setIsLoading(false);
       return {
         ok: false,
         success: false,
-        error: "Role ID is required for volunteer and admin login.",
+        error: "Role ID is required for volunteer and staff login.",
       };
     }
 
@@ -178,6 +182,20 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
+  const signupStaff = useCallback(async (payload) => {
+    try {
+      const response = await signupStaffRequest(payload);
+      return { ok: true, success: true, data: response, error: null };
+    } catch (error) {
+      return {
+        ok: false,
+        success: false,
+        data: null,
+        error: error instanceof ApiError ? error.message : "Unable to create staff account.",
+      };
+    }
+  }, []);
+
   const forgotPassword = useCallback(async (email) => {
     try {
       const response = await forgotPasswordRequest(email);
@@ -258,6 +276,7 @@ export function AuthProvider({ children }) {
       login,
       signupNgo,
       signupVolunteer,
+      signupStaff,
       forgotPassword,
       resetPassword,
       validateResetToken,
@@ -279,6 +298,7 @@ export function AuthProvider({ children }) {
     login,
     signupNgo,
     signupVolunteer,
+    signupStaff,
     forgotPassword,
     resetPassword,
     validateResetToken,
